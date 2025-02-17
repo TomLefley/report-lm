@@ -53,6 +53,10 @@ gradle-app.setting
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/**/usage.statistics.xml
+.idea/**/misc.xml
+.idea/**/modules.xml
+.idea/**/vcs.xml
+.idea/**/*.iml
 .idea/**/dictionaries
 .idea/**/shelf
 
