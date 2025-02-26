@@ -1,7 +1,3 @@
-Here's your updated README:
-
----
-
 # ReportLM – AI-Powered Reporting for Burp Suite
 
 **ReportLM** is a Burp Suite extension that leverages [Burp AI](https://portswigger.net/burp/documentation/desktop/extensions/using-ai-extensions) to generate custom reports from issues identified by Burp Scanner. This tool streamlines the reporting process, allowing users to curate issues, apply custom specifications, and generate comprehensive reports with AI assistance.
@@ -27,7 +23,3 @@ Here's your updated README:
 All AI-related data is handled in accordance with PortSwigger's Security & Compliance framework – see the [documentation](https://portswigger.net/burp/documentation/desktop/extensions/ai-security-privacy-data-handling) for details.
 
 This project is licensed under the MIT License – see the [LICENSE](LICENSE) file for details.
-
----
-
-Let me know if you'd like any further tweaks! 🚀
