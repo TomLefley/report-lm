@@ -11,7 +11,12 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'net.portswigger.burp.extensions:montoya-api:2025.2'
+    compileOnly "net.portswigger.burp.extensions:montoya-api:${montoyaVersion}"
+
+    compileOnly "com.formdev:flatlaf:${flatlafVersion}"
+    compileOnly "com.formdev:flatlaf-extras:${flatlafVersion}"
+
+    implementation "org.commonmark:commonmark:${commonmarkVersion}"
 }
 
 jar {
