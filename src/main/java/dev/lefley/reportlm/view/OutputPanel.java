@@ -2,6 +2,7 @@ package dev.lefley.reportlm.view;
 
 import dev.lefley.reportlm.view.components.CopyToClipboardButton;
 import dev.lefley.reportlm.view.components.ReportPane;
+import dev.lefley.reportlm.view.components.ToggleReadMeButton;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -9,6 +10,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 
 import static javax.swing.BoxLayout.X_AXIS;
 import static javax.swing.BoxLayout.Y_AXIS;
@@ -17,6 +19,7 @@ public class OutputPanel extends JPanel
 {
     private final ReportPane reportPane;
     private final CopyToClipboardButton copyToClipboardButton;
+    private final ToggleReadMeButton toggleReadMeButton;
 
     public OutputPanel()
     {
@@ -36,6 +39,12 @@ public class OutputPanel extends JPanel
         copyToClipboardButton.setVisible(false);
         toolbar.add(copyToClipboardButton);
 
+        toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        toggleReadMeButton = new ToggleReadMeButton(this::showReadMe, this::hideReadMe);
+        toggleReadMeButton.setVisible(false);
+        toolbar.add(toggleReadMeButton);
+
         add(toolbar);
 
         add(Box.createVerticalStrut(10));
@@ -47,7 +56,22 @@ public class OutputPanel extends JPanel
 
     public void setReport(String report)
     {
+        toggleReadMeButton.setVisible(true);
+        toggleReadMeButton.toggle(true);
+
         copyToClipboardButton.setVisible(true);
-        reportPane.setText(report);
+        reportPane.setReport(report);
+    }
+
+    private void showReadMe()
+    {
+        copyToClipboardButton.setVisible(false);
+        reportPane.showReadMe();
+    }
+
+    private void hideReadMe()
+    {
+        copyToClipboardButton.setVisible(true);
+        reportPane.hideReadMe();
     }
 }

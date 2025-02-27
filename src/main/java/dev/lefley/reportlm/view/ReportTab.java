@@ -31,5 +31,7 @@ public class ReportTab extends JPanel
         splitPane.setRightComponent(outputPanel);
 
         add(splitPane, CENTER);
+
+        splitPane.setResizeWeight(0.3f);
     }
 }
