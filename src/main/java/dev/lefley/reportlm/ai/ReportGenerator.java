@@ -6,10 +6,8 @@ import burp.api.montoya.scanner.audit.issues.AuditIssue;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.AiToggledEvent;
 import dev.lefley.reportlm.util.Logger;
+import dev.lefley.reportlm.util.Markdown;
 import dev.lefley.reportlm.util.Threads;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,11 +35,7 @@ public class ReportGenerator
                                                         - Include all the information requested by the client
                                                         - Include any additional information you think is relevant
                                                  
-                                                 A post-processor will be used to add issue evidence (in the form of HTTP messages) to the report. Indicate where these should be inserted using the marker: `{{evidence(issue_index)}}`.
                                                  """;
-
-    private static final Parser MARKDOWN_PARSER = Parser.builder().build();
-    private static final HtmlRenderer HTML_RENDERER = HtmlRenderer.builder().escapeHtml(true).build();
 
     private final Ai ai;
 
@@ -90,7 +84,7 @@ public class ReportGenerator
         Logger.logToOutput("Generating report from %d issues ...".formatted(issues.size()));
 
         return CompletableFuture.supplyAsync(() -> getReport(messages), Threads::execute)
-                .thenApply(ReportGenerator::parseReport);
+                .thenApply(Markdown::renderReportAsHtml);
     }
 
     private String getReport(List<Message> messages)
@@ -109,22 +103,22 @@ public class ReportGenerator
     private static Message createIssueMessage(AuditIssue auditIssue)
     {
         return userMessage("""
-                           Issue Type: %s
+                           Issue type: %s
+                           Issue severity: %s
+                           Issue confidence: %s
                            URL: %s
                            Detail: %s
+                           Background: %s
                            Remediation: %s
                            """.formatted(
                 auditIssue.name(),
+                auditIssue.severity(),
+                auditIssue.confidence(),
                 auditIssue.baseUrl(),
                 auditIssue.detail(),
+                auditIssue.definition().background(),
                 auditIssue.remediation()
         ));
-    }
-
-    private static String parseReport(String report)
-    {
-        Node document = MARKDOWN_PARSER.parse(report);
-        return HTML_RENDERER.render(document);
     }
 
     public boolean isAiEnabled()
