@@ -16,7 +16,7 @@ import static javax.swing.JSplitPane.VERTICAL_SPLIT;
 
 public class InputPanel extends JPanel
 {
-    public InputPanel(Toolbar toolbar, CustomInstructionsInput customInstructionsInput, IssuesModel issuesModel)
+    public InputPanel(Toolbar toolbar, CustomRequirementsInput customInstructionsInput, IssuesModel issuesModel)
     {
         super(new BorderLayout());
         setBorder(new EmptyBorder(20, 20, 20, 20));

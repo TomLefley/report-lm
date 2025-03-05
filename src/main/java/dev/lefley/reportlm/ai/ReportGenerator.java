@@ -23,20 +23,21 @@ import static burp.api.montoya.ai.chat.Message.userMessage;
 public class ReportGenerator
 {
     private static final String SYSTEM_MESSAGE = """
-                                                 You are a vulnerability report writer.
+                                                 You are a DAST vulnerability report writer.
                                                  You will be given a series of wep application vulnerabilities found by Burp Suite's DAST scanner.
-                                                 You will also be given a set of requirements or custom instructions from the client.
+                                                 You will also be given a set of custom requirements from the client.
                                                  
-                                                 From these, generate a report that includes:
+                                                 Your task is to generate a vulnerability report in simple markdown.
                                                  
-                                                     - A summary of the vulnerabilities found
-                                                     - Detailed descriptions of each vulnerability
-                                                     - Recommendations for remediation
-                                                     - Any additional information requested by the client
+                                                 Unless otherwise specified, the report should:
                                                  
-                                                 Aim to use the original wording of the issues where possible.
+                                                        - Be structured in a clear and readable format
+                                                        - Be detailed and comprehensive
+                                                        - Retain the original wording of the issues where possible
+                                                        - Include all the information requested by the client
+                                                        - Include any additional information you think is relevant
                                                  
-                                                 Where issue evidence should be embedded, indicate this with the following sequence: [EMBED ${issue_index}]
+                                                 A post-processor will be used to add issue evidence (in the form of HTTP messages) to the report. Indicate where these should be inserted using the marker: `{{evidence(issue_index)}}`.
                                                  """;
 
     private static final Parser MARKDOWN_PARSER = Parser.builder().build();
@@ -79,7 +80,7 @@ public class ReportGenerator
         messages.add(systemMessage(SYSTEM_MESSAGE));
         if (customInstructions != null && !customInstructions.isEmpty())
         {
-            messages.add(userMessage(customInstructions));
+            messages.add(createCustomRequirementsMessage(customInstructions));
         }
         for (AuditIssue issue : issues)
         {
@@ -98,6 +99,11 @@ public class ReportGenerator
 
         Logger.logToOutput("Report generated!");
         return markdownReport;
+    }
+
+    private static Message createCustomRequirementsMessage(String customInstructions)
+    {
+        return userMessage("Custom requirements:\n\n" + customInstructions);
     }
 
     private static Message createIssueMessage(AuditIssue auditIssue)

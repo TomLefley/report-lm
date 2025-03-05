@@ -1,7 +1,7 @@
 package dev.lefley.reportlm.controller;
 
 import dev.lefley.reportlm.ai.ReportGenerator;
-import dev.lefley.reportlm.model.CustomInstructionsModel;
+import dev.lefley.reportlm.model.CustomRequirementsModel;
 import dev.lefley.reportlm.model.GenerateReportModel;
 import dev.lefley.reportlm.model.IssuesModel;
 import dev.lefley.reportlm.util.Events;
@@ -15,7 +15,7 @@ public class OutputController
     private final ToolbarController toolbarController;
 
     private final IssuesModel issuesModel;
-    private final CustomInstructionsModel customInstructionsModel;
+    private final CustomRequirementsModel customRequirementsModel;
     private final GenerateReportModel generateReportModel;
 
     private final OutputView outputView;
@@ -25,7 +25,7 @@ public class OutputController
     public OutputController(
             ToolbarController toolbarController,
             IssuesModel issuesModel,
-            CustomInstructionsModel customInstructionsModel,
+            CustomRequirementsModel customRequirementsModel,
             GenerateReportModel generateReportModel,
             OutputView outputView,
             ReportGenerator reportGenerator
@@ -33,7 +33,7 @@ public class OutputController
     {
         this.toolbarController = toolbarController;
         this.issuesModel = issuesModel;
-        this.customInstructionsModel = customInstructionsModel;
+        this.customRequirementsModel = customRequirementsModel;
         this.generateReportModel = generateReportModel;
         this.outputView = outputView;
 
@@ -47,7 +47,7 @@ public class OutputController
     {
         setGenerationRunning(true);
 
-        reportGenerator.generateReport(customInstructionsModel.getInstructions(), issuesModel.getIssues())
+        reportGenerator.generateReport(customRequirementsModel.getRequirements(), issuesModel.getIssues())
                 .thenAccept(outputView::setReport)
                 .exceptionally(throwable -> {
                     if (throwable instanceof IllegalStateException)

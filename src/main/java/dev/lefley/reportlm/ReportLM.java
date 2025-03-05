@@ -11,7 +11,7 @@ import dev.lefley.reportlm.model.GenerateReportModel;
 import dev.lefley.reportlm.model.IssuesModel;
 import dev.lefley.reportlm.util.Logger;
 import dev.lefley.reportlm.util.Threads;
-import dev.lefley.reportlm.view.components.CustomInstructionsInput;
+import dev.lefley.reportlm.view.components.CustomRequirementsInput;
 import dev.lefley.reportlm.view.components.InputPanel;
 import dev.lefley.reportlm.view.components.OutputPanel;
 import dev.lefley.reportlm.view.components.ReportMenuItemsProvider;
@@ -36,7 +36,7 @@ public class ReportLM implements BurpExtension
         ReportGenerator reportGenerator = new ReportGenerator(montoyaApi.ai());
 
         IssuesModel issuesModel = new IssuesModel();
-        CustomInstructionsInput customInstructionsModel = new CustomInstructionsInput();
+        CustomRequirementsInput customInstructionsModel = new CustomRequirementsInput();
         GenerateReportModel generateReportModel = new GenerateReportModel();
 
         Toolbar toolbar = new Toolbar();
