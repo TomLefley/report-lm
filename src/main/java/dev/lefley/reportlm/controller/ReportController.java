@@ -3,10 +3,9 @@ package dev.lefley.reportlm.controller;
 import burp.api.montoya.ai.Ai;
 import burp.api.montoya.ai.chat.Message;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
-
 import dev.lefley.reportlm.util.Logger;
 import dev.lefley.reportlm.util.Threads;
-import dev.lefley.reportlm.view.OutputPanel;
+import dev.lefley.reportlm.view.OutputView;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -14,7 +13,6 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Stream;
 
 import static burp.api.montoya.ai.chat.Message.systemMessage;
 import static burp.api.montoya.ai.chat.Message.userMessage;
@@ -33,21 +31,23 @@ public class ReportController
                                                      - Recommendations for remediation
                                                      - Any additional information requested by the client
                                                  
+                                                 Aim to use the original wording of the issues where possible.
+                                                 
                                                  Where issue evidence should be embedded, indicate this with the following sequence: [EMBED ${issue_index}]
                                                  """;
 
     private final Ai ai;
-    private final OutputPanel outputPanel;
+    private final OutputView outputView;
 
-    public ReportController(Ai ai, OutputPanel outputPanel)
+    public ReportController(Ai ai, OutputView outputView)
     {
         this.ai = ai;
-        this.outputPanel = outputPanel;
+        this.outputView = outputView;
     }
 
     public CompletableFuture<Void> generateReport(String customInstructions, List<AuditIssue> issues)
     {
-        if (!ai.isEnabled())
+        if (!isAiEnabled())
         {
             Logger.logToOutput("Cannot generate report. AI is not enabled!");
             return CompletableFuture.completedFuture(null);
@@ -74,7 +74,7 @@ public class ReportController
 
         return CompletableFuture.supplyAsync(() -> getReport(messages), Threads::execute)
                 .thenApply(ReportController::parseReport)
-                .thenAccept(outputPanel::setReport)
+                .thenAccept(outputView::setReport)
                 .exceptionally(throwable -> {
                     Logger.logToError("Failed to generate report!", throwable);
                     return null;
@@ -108,5 +108,10 @@ public class ReportController
     {
         Node document = Parser.builder().build().parse(report);
         return HtmlRenderer.builder().build().render(document);
+    }
+
+    public boolean isAiEnabled()
+    {
+        return ai.isEnabled();
     }
 }

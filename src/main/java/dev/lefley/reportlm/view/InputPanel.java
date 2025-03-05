@@ -1,7 +1,5 @@
 package dev.lefley.reportlm.view;
 
-import burp.api.montoya.ai.Ai;
-
 import dev.lefley.reportlm.controller.ReportController;
 import dev.lefley.reportlm.model.IssuesModel;
 import dev.lefley.reportlm.util.Threads;
@@ -21,7 +19,7 @@ import static javax.swing.BoxLayout.Y_AXIS;
 
 public class InputPanel extends JPanel
 {
-    public InputPanel(Ai ai, ReportController reportController, IssuesModel issuesModel)
+    public InputPanel(ReportController reportController, IssuesModel issuesModel)
     {
         setLayout(new BoxLayout(this, Y_AXIS));
         setBorder(new EmptyBorder(20, 20, 20, 20));
@@ -29,7 +27,7 @@ public class InputPanel extends JPanel
         PrimaryButton generateButton = new PrimaryButton("Generate Report");
         Threads.scheduleAtFixedRate(
                 () -> {
-                    if (ai.isEnabled())
+                    if (reportController.isAiEnabled())
                     {
                         generateButton.setEnabled(true);
                         generateButton.setToolTipText("Generate a report");

@@ -23,7 +23,7 @@ import static java.util.Arrays.stream;
 import static javax.swing.BoxLayout.X_AXIS;
 import static javax.swing.BoxLayout.Y_AXIS;
 
-public class IssuesPanel extends JPanel implements dev.lefley.reportlm.view.IssuesView
+public class IssuesPanel extends JPanel
 {
     public IssuesPanel(IssuesModel model, JButton... additionalToolbarButtons)
     {

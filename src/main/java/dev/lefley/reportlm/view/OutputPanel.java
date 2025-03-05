@@ -15,7 +15,7 @@ import java.awt.Dimension;
 import static javax.swing.BoxLayout.X_AXIS;
 import static javax.swing.BoxLayout.Y_AXIS;
 
-public class OutputPanel extends JPanel
+public class OutputPanel extends JPanel implements OutputView
 {
     private final ReportPane reportPane;
     private final CopyToClipboardButton copyToClipboardButton;
@@ -54,6 +54,7 @@ public class OutputPanel extends JPanel
         add(scrollPane);
     }
 
+    @Override
     public void setReport(String report)
     {
         toggleReadMeButton.setVisible(true);

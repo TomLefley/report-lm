@@ -3,9 +3,13 @@ package dev.lefley.reportlm;
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.EnhancedCapability;
 import burp.api.montoya.MontoyaApi;
-
+import dev.lefley.reportlm.controller.IssuesController;
+import dev.lefley.reportlm.controller.ReportController;
+import dev.lefley.reportlm.model.IssuesModel;
 import dev.lefley.reportlm.util.Logger;
 import dev.lefley.reportlm.util.Threads;
+import dev.lefley.reportlm.view.InputPanel;
+import dev.lefley.reportlm.view.OutputPanel;
 import dev.lefley.reportlm.view.ReportTab;
 import dev.lefley.reportlm.view.components.burp.BurpFont;
 
@@ -23,7 +27,16 @@ public class ReportLM implements BurpExtension
         BurpFont.initialize(montoyaApi.userInterface());
         Threads.initialize(montoyaApi.extension());
 
-        ReportTab reportTab = new ReportTab(montoyaApi);
+
+        IssuesModel issuesModel = new IssuesModel();
+        IssuesController issuesController = new IssuesController(issuesModel);
+        montoyaApi.userInterface().registerContextMenuItemsProvider(issuesController);
+
+        OutputPanel outputPanel = new OutputPanel();
+        ReportController reportController = new ReportController(montoyaApi.ai(), outputPanel);
+        InputPanel inputPanel = new InputPanel(reportController, issuesModel);
+
+        ReportTab reportTab = new ReportTab(inputPanel, outputPanel);
         montoyaApi.userInterface().registerSuiteTab("ReportLM", reportTab);
     }
 
