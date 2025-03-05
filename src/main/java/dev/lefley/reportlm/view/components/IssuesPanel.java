@@ -1,10 +1,9 @@
 package dev.lefley.reportlm.view.components;
 
 import dev.lefley.reportlm.model.IssuesModel;
+import dev.lefley.reportlm.util.Events;
+import dev.lefley.reportlm.util.Events.IssuesSelectedEvent;
 
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -13,40 +12,17 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
+import java.awt.BorderLayout;
 import java.awt.Component;
 
-import static dev.lefley.reportlm.view.components.burp.BurpColor.ACTION_HOVER;
-import static dev.lefley.reportlm.view.components.burp.BurpColor.ACTION_NORMAL;
-import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
-import static dev.lefley.reportlm.view.components.burp.BurpIconFile.DELETE;
+import static java.awt.BorderLayout.CENTER;
 import static java.util.Arrays.stream;
-import static javax.swing.BoxLayout.X_AXIS;
-import static javax.swing.BoxLayout.Y_AXIS;
 
 public class IssuesPanel extends JPanel
 {
-    public IssuesPanel(IssuesModel model, JButton... additionalToolbarButtons)
+    public IssuesPanel(IssuesModel model)
     {
-        setLayout(new BoxLayout(this, Y_AXIS));
-
-        JPanel toolbar = new JPanel();
-        toolbar.setLayout(new BoxLayout(toolbar, X_AXIS));
-
-        JButton removeIssueButton = new JButton(icon(DELETE).fontSized().withNormalColour(ACTION_NORMAL).withHoverColour(ACTION_HOVER).build());
-        removeIssueButton.setToolTipText("Remove selected issues");
-        removeIssueButton.addActionListener(e -> model.removeSelectedIssues());
-        removeIssueButton.setEnabled(false);
-
-        toolbar.add(removeIssueButton);
-
-        toolbar.add(Box.createHorizontalGlue());
-
-        for (JButton toolbarButton : additionalToolbarButtons)
-        {
-            toolbarButton.setEnabled(false);
-
-            toolbar.add(toolbarButton);
-        }
+        super(new BorderLayout());
 
         JTable table = new JTable(model);
 
@@ -60,23 +36,12 @@ public class IssuesPanel extends JPanel
         table.setDefaultRenderer(JLabel.class, new LabelCellRenderer());
         table.getSelectionModel().addListSelectionListener(e -> {
             int[] selectedRows = table.getSelectedRows();
-            model.setSelectedRows(stream(selectedRows).map(table::convertRowIndexToModel).toArray());
+            int[] modelSelectedRows = stream(selectedRows).map(table::convertRowIndexToModel).toArray();
 
-            removeIssueButton.setEnabled(selectedRows.length > 0);
+            Events.publish(new IssuesSelectedEvent(modelSelectedRows));
         });
 
-        model.addTableModelListener(e -> {
-            boolean enableToolbar = model.getRowCount() > 0;
-
-            for (JButton toolbarButton : additionalToolbarButtons)
-            {
-                toolbarButton.setEnabled(enableToolbar);
-            }
-        });
-
-        add(toolbar);
-        add(Box.createVerticalStrut(10));
-        add(new JScrollPane(table));
+        add(new JScrollPane(table), CENTER);
     }
 
     private static class LabelCellRenderer extends DefaultTableCellRenderer

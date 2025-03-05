@@ -21,7 +21,7 @@ public class Threads
 
     public static void initialize(Extension extension)
     {
-        executor = Executors.newCachedThreadPool();
+        executor = Executors.newVirtualThreadPerTaskExecutor();
         scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
         extension.registerUnloadingHandler(() -> {

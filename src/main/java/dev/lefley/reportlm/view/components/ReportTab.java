@@ -1,4 +1,4 @@
-package dev.lefley.reportlm.view;
+package dev.lefley.reportlm.view.components;
 
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;

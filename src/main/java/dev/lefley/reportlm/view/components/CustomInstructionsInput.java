@@ -1,11 +1,13 @@
 package dev.lefley.reportlm.view.components;
 
+import dev.lefley.reportlm.model.CustomInstructionsModel;
+
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 
-public class CustomInstructionsInput extends JTextArea
+public class CustomInstructionsInput extends JTextArea implements CustomInstructionsModel
 {
     private static final String PLACEHOLDER = """
                                               Enter any custom instructions for report generation here.
@@ -48,7 +50,8 @@ public class CustomInstructionsInput extends JTextArea
         });
     }
 
-    public String getValue()
+    @Override
+    public String getInstructions()
     {
         return showingPlaceholder ? "" : getText();
     }
@@ -58,6 +61,5 @@ public class CustomInstructionsInput extends JTextArea
         setText(PLACEHOLDER);
         showingPlaceholder = true;
     }
-
 
 }

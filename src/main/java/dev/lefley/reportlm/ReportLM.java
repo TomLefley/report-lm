@@ -3,14 +3,20 @@ package dev.lefley.reportlm;
 import burp.api.montoya.BurpExtension;
 import burp.api.montoya.EnhancedCapability;
 import burp.api.montoya.MontoyaApi;
+import dev.lefley.reportlm.ai.ReportGenerator;
 import dev.lefley.reportlm.controller.IssuesController;
-import dev.lefley.reportlm.controller.ReportController;
+import dev.lefley.reportlm.controller.OutputController;
+import dev.lefley.reportlm.controller.ToolbarController;
+import dev.lefley.reportlm.model.GenerateReportModel;
 import dev.lefley.reportlm.model.IssuesModel;
 import dev.lefley.reportlm.util.Logger;
 import dev.lefley.reportlm.util.Threads;
-import dev.lefley.reportlm.view.InputPanel;
-import dev.lefley.reportlm.view.OutputPanel;
-import dev.lefley.reportlm.view.ReportTab;
+import dev.lefley.reportlm.view.components.CustomInstructionsInput;
+import dev.lefley.reportlm.view.components.InputPanel;
+import dev.lefley.reportlm.view.components.OutputPanel;
+import dev.lefley.reportlm.view.components.ReportMenuItemsProvider;
+import dev.lefley.reportlm.view.components.ReportTab;
+import dev.lefley.reportlm.view.components.Toolbar;
 import dev.lefley.reportlm.view.components.burp.BurpFont;
 
 import java.util.Set;
@@ -27,17 +33,23 @@ public class ReportLM implements BurpExtension
         BurpFont.initialize(montoyaApi.userInterface());
         Threads.initialize(montoyaApi.extension());
 
+        ReportGenerator reportGenerator = new ReportGenerator(montoyaApi.ai());
 
         IssuesModel issuesModel = new IssuesModel();
-        IssuesController issuesController = new IssuesController(issuesModel);
-        montoyaApi.userInterface().registerContextMenuItemsProvider(issuesController);
+        CustomInstructionsInput customInstructionsModel = new CustomInstructionsInput();
+        GenerateReportModel generateReportModel = new GenerateReportModel();
 
+        Toolbar toolbar = new Toolbar();
+        InputPanel inputPanel = new InputPanel(toolbar, customInstructionsModel, issuesModel);
         OutputPanel outputPanel = new OutputPanel();
-        ReportController reportController = new ReportController(montoyaApi.ai(), outputPanel);
-        InputPanel inputPanel = new InputPanel(reportController, issuesModel);
-
         ReportTab reportTab = new ReportTab(inputPanel, outputPanel);
+
         montoyaApi.userInterface().registerSuiteTab("ReportLM", reportTab);
+        montoyaApi.userInterface().registerContextMenuItemsProvider(new ReportMenuItemsProvider());
+
+        ToolbarController toolbarController = new ToolbarController(toolbar);
+        OutputController outputController = new OutputController(toolbarController, issuesModel, customInstructionsModel, generateReportModel, outputPanel, reportGenerator);
+        IssuesController issuesController = new IssuesController(toolbarController, outputController, issuesModel);
     }
 
     @Override

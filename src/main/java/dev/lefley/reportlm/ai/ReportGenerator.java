@@ -1,11 +1,12 @@
-package dev.lefley.reportlm.controller;
+package dev.lefley.reportlm.ai;
 
 import burp.api.montoya.ai.Ai;
 import burp.api.montoya.ai.chat.Message;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
+import dev.lefley.reportlm.util.Events;
+import dev.lefley.reportlm.util.Events.AiToggledEvent;
 import dev.lefley.reportlm.util.Logger;
 import dev.lefley.reportlm.util.Threads;
-import dev.lefley.reportlm.view.OutputView;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -13,11 +14,13 @@ import org.commonmark.renderer.html.HtmlRenderer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static burp.api.montoya.ai.chat.Message.systemMessage;
 import static burp.api.montoya.ai.chat.Message.userMessage;
 
-public class ReportController
+public class ReportGenerator
 {
     private static final String SYSTEM_MESSAGE = """
                                                  You are a vulnerability report writer.
@@ -40,26 +43,36 @@ public class ReportController
     private static final HtmlRenderer HTML_RENDERER = HtmlRenderer.builder().escapeHtml(true).build();
 
     private final Ai ai;
-    private final OutputView outputView;
 
-    public ReportController(Ai ai, OutputView outputView)
+    public ReportGenerator(Ai ai)
     {
         this.ai = ai;
-        this.outputView = outputView;
+
+        AtomicBoolean aiEnabled = new AtomicBoolean(false);
+        Threads.scheduleAtFixedRate(
+                () -> {
+                    boolean enabled = ai.isEnabled();
+                    if (aiEnabled.compareAndSet(!enabled, enabled))
+                    {
+                        Events.publish(new AiToggledEvent(enabled));
+                    }
+                },
+                0,
+                1,
+                TimeUnit.SECONDS
+        );
     }
 
-    public CompletableFuture<Void> generateReport(String customInstructions, List<AuditIssue> issues)
+    public CompletableFuture<String> generateReport(String customInstructions, List<AuditIssue> issues)
     {
         if (!isAiEnabled())
         {
-            Logger.logToOutput("Cannot generate report. AI is not enabled!");
-            return CompletableFuture.completedFuture(null);
+            return CompletableFuture.failedFuture(new IllegalStateException("AI is not enabled!"));
         }
 
         if (issues.isEmpty())
         {
-            Logger.logToOutput("Cannot generate report. No issues supplied!");
-            return CompletableFuture.completedFuture(null);
+            return CompletableFuture.failedFuture(new IllegalStateException("No issues supplied!"));
         }
 
         List<Message> messages = new ArrayList<>();
@@ -76,12 +89,7 @@ public class ReportController
         Logger.logToOutput("Generating report from %d issues ...".formatted(issues.size()));
 
         return CompletableFuture.supplyAsync(() -> getReport(messages), Threads::execute)
-                .thenApply(ReportController::parseReport)
-                .thenAccept(outputView::setReport)
-                .exceptionally(throwable -> {
-                    Logger.logToError("Failed to generate report!", throwable);
-                    return null;
-                });
+                .thenApply(ReportGenerator::parseReport);
     }
 
     private String getReport(List<Message> messages)

@@ -1,35 +1,53 @@
 package dev.lefley.reportlm.controller;
 
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
-import burp.api.montoya.ui.contextmenu.AuditIssueContextMenuEvent;
-import burp.api.montoya.ui.contextmenu.ContextMenuItemsProvider;
-
 import dev.lefley.reportlm.model.IssuesModel;
+import dev.lefley.reportlm.util.Events;
+import dev.lefley.reportlm.util.Events.AddIssuesEvent;
+import dev.lefley.reportlm.util.Events.IssuesSelectedEvent;
+import dev.lefley.reportlm.util.Events.RemoveSelectedIssues;
 
-import javax.swing.JMenuItem;
-import java.awt.Component;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
-
-public class IssuesController implements ContextMenuItemsProvider
+public class IssuesController
 {
+    private final ToolbarController toolbarController;
+    private final OutputController outputController;
     private final IssuesModel issuesModel;
 
-    public IssuesController(IssuesModel issuesModel)
+    public IssuesController(ToolbarController toolbarController, OutputController outputController, IssuesModel issuesModel)
     {
+        this.toolbarController = toolbarController;
+        this.outputController = outputController;
         this.issuesModel = issuesModel;
+
+        Events.subscribe(AddIssuesEvent.class, e -> addIssues(e.auditIssues()));
+        Events.subscribe(IssuesSelectedEvent.class, e -> setIssuesSelected(e.selectedRows()));
+        Events.subscribe(RemoveSelectedIssues.class, e -> removeSelectedIssues());
     }
 
-    @Override
-    public List<Component> provideMenuItems(AuditIssueContextMenuEvent event)
+    private void addIssues(List<AuditIssue> auditIssues)
     {
-        List<AuditIssue> auditIssues = event.selectedIssues();
+        issuesModel.addIssues(auditIssues);
 
-        JMenuItem menuItem = new JMenuItem();
-        menuItem.setText("Add " + (auditIssues.size() > 1 ? "selected issues" : "issue") + " to report");
-        menuItem.addActionListener(e -> issuesModel.addIssues(auditIssues));
+        setIssuesPopulated(!auditIssues.isEmpty());
+    }
 
-        return singletonList(menuItem);
+    private void removeSelectedIssues()
+    {
+        issuesModel.removeSelectedIssues();
+
+        setIssuesPopulated(!issuesModel.getIssues().isEmpty());
+    }
+
+    private void setIssuesPopulated(boolean issuesPopulated)
+    {
+        outputController.setIssuesPopulated(issuesPopulated);
+    }
+
+    private void setIssuesSelected(int[] selectedRows)
+    {
+        issuesModel.setSelectedRows(selectedRows);
+        toolbarController.setIssuesSelected(selectedRows.length > 0);
     }
 }

@@ -1,13 +1,12 @@
-package dev.lefley.reportlm.view;
+package dev.lefley.reportlm.view.components;
 
-import dev.lefley.reportlm.view.components.CopyToClipboardButton;
-import dev.lefley.reportlm.view.components.ReportPane;
-import dev.lefley.reportlm.view.components.ToggleReadMeButton;
+import dev.lefley.reportlm.view.OutputView;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -57,11 +56,13 @@ public class OutputPanel extends JPanel implements OutputView
     @Override
     public void setReport(String report)
     {
-        toggleReadMeButton.setVisible(true);
-        toggleReadMeButton.toggle(true);
+        SwingUtilities.invokeLater(() -> {
+            toggleReadMeButton.setVisible(true);
+            toggleReadMeButton.toggle(true);
 
-        copyToClipboardButton.setVisible(true);
-        reportPane.setReport(report);
+            copyToClipboardButton.setVisible(true);
+            reportPane.setReport(report);
+        });
     }
 
     private void showReadMe()
