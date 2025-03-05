@@ -36,6 +36,9 @@ public class ReportController
                                                  Where issue evidence should be embedded, indicate this with the following sequence: [EMBED ${issue_index}]
                                                  """;
 
+    private static final Parser MARKDOWN_PARSER = Parser.builder().build();
+    private static final HtmlRenderer HTML_RENDERER = HtmlRenderer.builder().escapeHtml(true).build();
+
     private final Ai ai;
     private final OutputView outputView;
 
@@ -106,8 +109,8 @@ public class ReportController
 
     private static String parseReport(String report)
     {
-        Node document = Parser.builder().build().parse(report);
-        return HtmlRenderer.builder().build().render(document);
+        Node document = MARKDOWN_PARSER.parse(report);
+        return HTML_RENDERER.render(document);
     }
 
     public boolean isAiEnabled()
