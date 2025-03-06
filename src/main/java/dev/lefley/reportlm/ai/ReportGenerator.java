@@ -36,7 +36,7 @@ public class ReportGenerator
                                                         - Include all the information requested by the client
                                                         - Include any additional information you think is relevant
                                                  
-                                                 Where issue evidence is available, each item can be referenced with a link to "file:./evidence/<issue_hash>/request<n>" and "file:./evidence/<issue_hash>/response<n>".
+                                                 Where issue evidence is available, each item can be referenced with a link to "file:./evidence/<issue_id>/request<n>" and "file:./evidence/<issue_id>/response<n>".
                                                  """;
 
     private final Ai ai;
@@ -131,7 +131,7 @@ public class ReportGenerator
     private static Message createIssueMessage(AuditIssue auditIssue)
     {
         return userMessage("""
-                           Issue has: %s
+                           Issue ID: %s
                            Issue type: %s
                            Issue severity: %s
                            Issue confidence: %s
