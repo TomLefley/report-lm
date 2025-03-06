@@ -1,5 +1,6 @@
 package dev.lefley.reportlm.view.components;
 
+import dev.lefley.reportlm.model.Report;
 import dev.lefley.reportlm.view.OutputView;
 
 import javax.swing.Box;
@@ -54,14 +55,15 @@ public class OutputPanel extends JPanel implements OutputView
     }
 
     @Override
-    public void setReport(String report)
+    public void setReport(Report report)
     {
         SwingUtilities.invokeLater(() -> {
+            reportPane.setReport(report);
+
             toggleReadMeButton.setVisible(true);
             toggleReadMeButton.toggle(true);
 
             copyToClipboardButton.setVisible(true);
-            reportPane.setReport(report);
         });
     }
 

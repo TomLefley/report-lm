@@ -3,6 +3,7 @@ package dev.lefley.reportlm.ai;
 import burp.api.montoya.ai.Ai;
 import burp.api.montoya.ai.chat.Message;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
+import dev.lefley.reportlm.model.Report;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.AiToggledEvent;
 import dev.lefley.reportlm.util.Logger;
@@ -35,6 +36,7 @@ public class ReportGenerator
                                                         - Include all the information requested by the client
                                                         - Include any additional information you think is relevant
                                                  
+                                                 Where issue evidence is available, each item can be referenced with a link to "file:./evidence/<issue_hash>/request<n>" and "file:./evidence/<issue_hash>/response<n>".
                                                  """;
 
     private final Ai ai;
@@ -58,9 +60,9 @@ public class ReportGenerator
         );
     }
 
-    public CompletableFuture<String> generateReport(String customInstructions, List<AuditIssue> issues)
+    public CompletableFuture<Report> generateReport(String customInstructions, List<AuditIssue> issues)
     {
-        if (!isAiEnabled())
+        if (!ai.isEnabled())
         {
             return CompletableFuture.failedFuture(new IllegalStateException("AI is not enabled!"));
         }
@@ -70,6 +72,44 @@ public class ReportGenerator
             return CompletableFuture.failedFuture(new IllegalStateException("No issues supplied!"));
         }
 
+        return CompletableFuture.supplyAsync(() -> initializeReport(issues), Threads::execute)
+                .thenApply(report -> {
+                    String reportIndex = generateReportIndex(customInstructions, issues);
+                    report.saveIndex(reportIndex);
+
+                    return report;
+                });
+    }
+
+    private static Report initializeReport(List<AuditIssue> auditIssues)
+    {
+        Report report = Report.createReport();
+        report.saveEvidence(auditIssues);
+
+        return report;
+    }
+
+    private String generateReportIndex(String customInstructions, List<AuditIssue> issues)
+    {
+        String markdownReport = executePrompt(customInstructions, issues);
+
+        return Markdown.renderMarkdownAsHtml(markdownReport);
+    }
+
+    private String executePrompt(String customRequirements, List<AuditIssue> issues)
+    {
+        Logger.logToOutput("Generating report from %d issues ...".formatted(issues.size()));
+
+        List<Message> messages = createMessages(customRequirements, issues);
+
+        String markdownReport = ai.prompt().execute(messages.toArray(Message[]::new)).content();
+
+        Logger.logToOutput("Report generated!");
+        return markdownReport;
+    }
+
+    private static List<Message> createMessages(String customInstructions, List<AuditIssue> issues)
+    {
         List<Message> messages = new ArrayList<>();
         messages.add(systemMessage(SYSTEM_MESSAGE));
         if (customInstructions != null && !customInstructions.isEmpty())
@@ -80,19 +120,7 @@ public class ReportGenerator
         {
             messages.add(createIssueMessage(issue));
         }
-
-        Logger.logToOutput("Generating report from %d issues ...".formatted(issues.size()));
-
-        return CompletableFuture.supplyAsync(() -> getReport(messages), Threads::execute)
-                .thenApply(Markdown::renderReportAsHtml);
-    }
-
-    private String getReport(List<Message> messages)
-    {
-        String markdownReport = ai.prompt().execute(messages.toArray(Message[]::new)).content();
-
-        Logger.logToOutput("Report generated!");
-        return markdownReport;
+        return messages;
     }
 
     private static Message createCustomRequirementsMessage(String customInstructions)
@@ -103,6 +131,7 @@ public class ReportGenerator
     private static Message createIssueMessage(AuditIssue auditIssue)
     {
         return userMessage("""
+                           Issue has: %s
                            Issue type: %s
                            Issue severity: %s
                            Issue confidence: %s
@@ -110,19 +139,17 @@ public class ReportGenerator
                            Detail: %s
                            Background: %s
                            Remediation: %s
+                           Evidence items: %d
                            """.formatted(
+                auditIssue.hashCode(),
                 auditIssue.name(),
                 auditIssue.severity(),
                 auditIssue.confidence(),
                 auditIssue.baseUrl(),
                 auditIssue.detail(),
                 auditIssue.definition().background(),
-                auditIssue.remediation()
+                auditIssue.remediation(),
+                auditIssue.requestResponses().size()
         ));
-    }
-
-    public boolean isAiEnabled()
-    {
-        return ai.isEnabled();
     }
 }

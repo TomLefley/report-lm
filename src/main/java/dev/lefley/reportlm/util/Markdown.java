@@ -12,9 +12,9 @@ public class Markdown
             .build();
 
 
-    public static String renderReportAsHtml(String report)
+    public static String renderMarkdownAsHtml(String markdown)
     {
-        Node document = MARKDOWN_PARSER.parse(report);
+        Node document = MARKDOWN_PARSER.parse(markdown);
         return HTML_RENDERER.render(document);
     }
 }

@@ -1,6 +1,8 @@
 package dev.lefley.reportlm.view;
 
+import dev.lefley.reportlm.model.Report;
+
 public interface OutputView
 {
-    void setReport(String report);
+    void setReport(Report report);
 }

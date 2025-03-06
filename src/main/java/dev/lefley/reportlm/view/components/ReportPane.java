@@ -1,9 +1,8 @@
 package dev.lefley.reportlm.view.components;
 
+import dev.lefley.reportlm.model.Report;
 import dev.lefley.reportlm.util.Logger;
-import org.commonmark.node.Node;
-import org.commonmark.parser.Parser;
-import org.commonmark.renderer.html.HtmlRenderer;
+import dev.lefley.reportlm.util.Markdown;
 
 import javax.swing.JTextPane;
 import javax.swing.border.EmptyBorder;
@@ -18,7 +17,7 @@ public class ReportPane extends JTextPane
 {
     private final String readMe;
 
-    private String report;
+    private Report report;
 
     public ReportPane()
     {
@@ -50,9 +49,8 @@ public class ReportPane extends JTextPane
         try (InputStream resource = getClass().getClassLoader().getResourceAsStream("resources/README.md"))
         {
             String readMeMd = new String(requireNonNull(resource).readAllBytes());
-            Node document = Parser.builder().build().parse(readMeMd);
 
-            return HtmlRenderer.builder().build().render(document);
+            return Markdown.renderMarkdownAsHtml(readMeMd);
         }
         catch (IOException | NullPointerException e)
         {
@@ -62,11 +60,18 @@ public class ReportPane extends JTextPane
         }
     }
 
-    public void setReport(String report)
+    public void setReport(Report report)
     {
         this.report = report;
 
-        setText(report);
+        try
+        {
+            setPage(report.getDirectory().resolve("index.html").toUri().toURL());
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     public void showReadMe()
@@ -76,6 +81,13 @@ public class ReportPane extends JTextPane
 
     public void hideReadMe()
     {
-        setText(report);
+        try
+        {
+            setPage(report.getDirectory().resolve("index.html").toUri().toURL());
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
