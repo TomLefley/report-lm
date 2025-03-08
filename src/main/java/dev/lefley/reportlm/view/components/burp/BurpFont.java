@@ -23,4 +23,10 @@ public class BurpFont
     {
         return displayFont().deriveFont(Font.BOLD);
     }
+
+    public static Font title()
+    {
+        Font bold = bold();
+        return bold.deriveFont(bold.getSize() * 1.5f);
+    }
 }

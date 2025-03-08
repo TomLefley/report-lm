@@ -65,8 +65,8 @@ public class BurpIcon extends FlatSVGIcon
         private final BurpIconFile iconFile;
 
         private float scale = 1.0f;
-        private BurpColor normalColour;
-        private BurpColor hoverColour;
+        private BurpColor normalColour = BurpColor.ACTION_NORMAL;
+        private BurpColor hoverColour = BurpColor.ACTION_HOVER;
 
         private Builder(BurpIconFile iconFile)
         {

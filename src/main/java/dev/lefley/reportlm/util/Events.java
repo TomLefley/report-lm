@@ -1,6 +1,7 @@
 package dev.lefley.reportlm.util;
 
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
+import dev.lefley.reportlm.config.Config;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,6 +56,10 @@ public class Events
     }
 
     public record AiToggledEvent(boolean aiEnabled) implements Event
+    {
+    }
+
+    public record ConfigChangedEvent(Config config) implements Event
     {
     }
 }

@@ -7,8 +7,6 @@ import javax.swing.SwingConstants;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import static dev.lefley.reportlm.view.components.burp.BurpColor.ACTION_HOVER;
-import static dev.lefley.reportlm.view.components.burp.BurpColor.ACTION_NORMAL;
 import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.README;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.REPORT;
@@ -31,8 +29,8 @@ public class ToggleReadMeButton extends JLabel
         setFocusable(false);
         setHorizontalTextPosition(SwingConstants.LEADING);
 
-        readMeIcon = icon(README).fontSized().withNormalColour(ACTION_NORMAL).withHoverColour(ACTION_HOVER).build();
-        reportIcon = icon(REPORT).fontSized().withNormalColour(ACTION_NORMAL).withHoverColour(ACTION_HOVER).build();
+        readMeIcon = icon(README).fontSized().build();
+        reportIcon = icon(REPORT).fontSized().build();
 
         MouseAdapter mouseAdapter = new MouseAdapter()
         {

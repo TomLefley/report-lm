@@ -18,9 +18,12 @@ public enum BurpIconFile
 
     COPY("copy.svg"),
     TICK("tick.svg"),
+    CLOSE("close.svg"),
     DELETE("delete.svg"),
     REPORT("notes.svg"),
     README("github.svg"),
+    SETTINGS("settings.svg"),
+    AI("ai.svg"),
     ;
 
     private static final String SVG_DIRECTORY_FILEPATH = "resources/Media/svg/%s";

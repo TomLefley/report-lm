@@ -10,8 +10,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.function.Supplier;
 
-import static dev.lefley.reportlm.view.components.burp.BurpColor.ACTION_HOVER;
-import static dev.lefley.reportlm.view.components.burp.BurpColor.ACTION_NORMAL;
 import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.COPY;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.TICK;
@@ -31,8 +29,8 @@ public class CopyToClipboardButton extends JLabel
         setFocusable(false);
         setHorizontalTextPosition(SwingConstants.LEADING);
 
-        copyIcon = icon(COPY).fontSized().withNormalColour(ACTION_NORMAL).withHoverColour(ACTION_HOVER).build();
-        tickIcon = icon(TICK).fontSized().withNormalColour(ACTION_NORMAL).withHoverColour(ACTION_HOVER).build();
+        copyIcon = icon(COPY).fontSized().build();
+        tickIcon = icon(TICK).fontSized().build();
         onCopy = new Timer(1000, e -> setReadyToCopy());
 
         setReadyToCopy();

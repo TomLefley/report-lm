@@ -3,11 +3,17 @@ package dev.lefley.reportlm.view.components;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.GenerateReportEvent;
 
+import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
+import static dev.lefley.reportlm.view.components.burp.BurpIconFile.AI;
+
 public class GenerateReportButton extends PrimaryButton
 {
     public GenerateReportButton()
     {
-        super("Generate Report");
+        super(
+                "Generate Report",
+                icon(AI)
+        );
 
         setEnabled(false);
 

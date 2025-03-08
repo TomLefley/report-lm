@@ -6,6 +6,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
+import java.awt.Dimension;
 
 import static javax.swing.BoxLayout.X_AXIS;
 
@@ -22,6 +23,10 @@ public class Toolbar extends JPanel implements ToolbarView
         add(removeIssueButton);
 
         add(Box.createHorizontalGlue());
+
+        add(new OpenConfigButton());
+
+        add(Box.createRigidArea(new Dimension(5, 0)));
 
         generateButton = new GenerateReportButton();
         add(generateButton);
