@@ -1,6 +1,7 @@
 package dev.lefley.reportlm.view.components;
 
 import dev.lefley.reportlm.config.Config;
+import dev.lefley.reportlm.model.ConfigModel;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.ConfigChangedEvent;
 
@@ -23,20 +24,20 @@ public class OpenConfigButton extends JButton
 {
     private ConfigWindow configWindow;
 
-    public OpenConfigButton()
+    public OpenConfigButton(ConfigModel configModel)
     {
         super(icon(SETTINGS).fontSized().build());
 
         setToolTipText("Open settings");
 
-        addActionListener(e -> openSettings());
+        addActionListener(e -> openSettings(configModel.getConfig()));
     }
 
-    private void openSettings()
+    private void openSettings(Config config)
     {
         if (configWindow == null)
         {
-            configWindow = new ConfigWindow();
+            configWindow = new ConfigWindow(config);
         }
 
         configWindow.setVisible(true);
@@ -46,7 +47,7 @@ public class OpenConfigButton extends JButton
 
     public class ConfigWindow extends JFrame
     {
-        public ConfigWindow()
+        public ConfigWindow(Config config)
         {
             setTitle("ReportLM settings");
 
@@ -57,7 +58,7 @@ public class OpenConfigButton extends JButton
 
             add(panel, BorderLayout.CENTER);
 
-            ConfigPanel configPanel = new ConfigPanel();
+            ConfigPanel configPanel = new ConfigPanel(config);
             panel.add(configPanel, BorderLayout.CENTER);
 
             JPanel actions = new JPanel();

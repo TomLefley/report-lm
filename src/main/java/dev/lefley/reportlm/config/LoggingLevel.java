@@ -36,4 +36,9 @@ public enum LoggingLevel
     {
         return explanation;
     }
+
+    public boolean isAtLeast(LoggingLevel level)
+    {
+        return this.ordinal() >= level.ordinal();
+    }
 }

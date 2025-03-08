@@ -1,5 +1,6 @@
 package dev.lefley.reportlm.view.components;
 
+import dev.lefley.reportlm.model.ConfigModel;
 import dev.lefley.reportlm.view.ToolbarView;
 
 import javax.swing.Box;
@@ -15,7 +16,7 @@ public class Toolbar extends JPanel implements ToolbarView
     private final RemoveIssueButton removeIssueButton;
     private final GenerateReportButton generateButton;
 
-    public Toolbar()
+    public Toolbar(ConfigModel configModel)
     {
         setLayout(new BoxLayout(this, X_AXIS));
 
@@ -24,7 +25,7 @@ public class Toolbar extends JPanel implements ToolbarView
 
         add(Box.createHorizontalGlue());
 
-        add(new OpenConfigButton());
+        add(new OpenConfigButton(configModel));
 
         add(Box.createRigidArea(new Dimension(5, 0)));
 

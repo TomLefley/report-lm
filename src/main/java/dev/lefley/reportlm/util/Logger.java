@@ -1,14 +1,30 @@
 package dev.lefley.reportlm.util;
 
 import burp.api.montoya.logging.Logging;
+import dev.lefley.reportlm.config.LoggingLevel;
+
+import static dev.lefley.reportlm.config.LoggingLevel.DEBUG;
+import static dev.lefley.reportlm.config.LoggingLevel.OFF;
 
 public class Logger
 {
+    private static volatile LoggingLevel loggingLevel;
     private static Logging logging;
 
     public static void initialize(Logging logging)
     {
+        loggingLevel = OFF;
         Logger.logging = logging;
+    }
+
+    public static void setLevel(LoggingLevel loggingLevel)
+    {
+        Logger.loggingLevel = loggingLevel;
+    }
+
+    public static LoggingLevel getLevel()
+    {
+        return loggingLevel;
     }
 
     public static void logToError(Throwable cause)
@@ -21,33 +37,21 @@ public class Logger
         logging.logToError(message);
     }
 
-    public static void raiseInfoEvent(String message)
-    {
-        logging.raiseInfoEvent(message);
-    }
-
-    public static void logToOutput(String message)
-    {
-        logging.logToOutput(message);
-    }
-
-    public static void raiseCriticalEvent(String message)
-    {
-        logging.raiseCriticalEvent(message);
-    }
-
     public static void logToError(String message, Throwable cause)
     {
         logging.logToError(message, cause);
     }
 
-    public static void raiseDebugEvent(String message)
+    public static void logToOutput(String message)
     {
-        logging.raiseDebugEvent(message);
+        logToOutput(message, DEBUG);
     }
 
-    public static void raiseErrorEvent(String message)
+    public static void logToOutput(String message, LoggingLevel atLevel)
     {
-        logging.raiseErrorEvent(message);
+        if (loggingLevel.isAtLeast(atLevel))
+        {
+            logging.logToOutput(message);
+        }
     }
 }

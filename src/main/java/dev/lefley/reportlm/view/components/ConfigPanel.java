@@ -33,7 +33,7 @@ public class ConfigPanel extends JPanel
     private final Description loggingLevelDescription;
     private final JLabel includeEvidenceLabel;
 
-    public ConfigPanel()
+    public ConfigPanel(Config config)
     {
         setBorder(new EmptyBorder(5, 5, 5, 5));
         setLayout(new GridBagLayout());
@@ -83,8 +83,8 @@ public class ConfigPanel extends JPanel
         includeEvidenceDescription = new Description("");
         add(includeEvidenceDescription, constraints);
 
-        setSelectedGenerationMode(((ReportGenerationMode) Objects.requireNonNullElse(generationModeSelection.getSelectedItem(), COMBINED)));
-        setIncludeEvidenceSelection(includeEvidenceSelection.isSelected());
+        setSelectedGenerationMode(config.reportGenerationMode());
+        setIncludeEvidenceSelection(config.includeEvidence());
 
         constraints = buildDefaultConstraints(0, 6);
         constraints.gridwidth = 2;
@@ -119,7 +119,7 @@ public class ConfigPanel extends JPanel
         loggingLevelDescription = new Description("");
         add(loggingLevelDescription, constraints);
 
-        setSelectedLoggingLevel((LoggingLevel) Objects.requireNonNullElse(loggingLevelSelection.getSelectedItem(), OFF));
+        setSelectedLoggingLevel(config.loggingLevel());
 
         constraints = buildDefaultConstraints(0, 11);
         constraints.gridwidth = 2;
@@ -162,6 +162,7 @@ public class ConfigPanel extends JPanel
 
     private void setSelectedGenerationMode(ReportGenerationMode generationMode)
     {
+        generationModeSelection.setSelectedItem(generationMode);
         generationModeDescription.setText(generationMode.getExplanation());
 
         if (generationMode == BURP)
@@ -191,6 +192,7 @@ public class ConfigPanel extends JPanel
 
     private void setIncludeEvidenceSelection(boolean includeEvidence)
     {
+        includeEvidenceSelection.setSelected(includeEvidence);
         if (includeEvidence)
         {
             includeEvidenceDescription.setText(
@@ -225,6 +227,7 @@ public class ConfigPanel extends JPanel
 
     private void setSelectedLoggingLevel(LoggingLevel loggingLevel)
     {
+        loggingLevelSelection.setSelectedItem(loggingLevel);
         loggingLevelDescription.setText(loggingLevel.getExplanation());
     }
 
