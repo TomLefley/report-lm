@@ -4,6 +4,7 @@ import dev.lefley.reportlm.config.Config;
 import dev.lefley.reportlm.model.ConfigModel;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.ConfigChangedEvent;
+import dev.lefley.reportlm.util.Logger;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -35,14 +36,21 @@ public class OpenConfigButton extends JButton
 
     private void openSettings(Config config)
     {
-        if (configWindow == null)
+        try
         {
-            configWindow = new ConfigWindow(config);
-        }
+            if (configWindow == null)
+            {
+                configWindow = new ConfigWindow(config);
+            }
 
-        configWindow.setVisible(true);
-        configWindow.toFront();
-        configWindow.requestFocus();
+            configWindow.setVisible(true);
+            configWindow.toFront();
+            configWindow.requestFocus();
+        }
+        catch (Exception e)
+        {
+            Logger.logToError(e);
+        }
     }
 
     public class ConfigWindow extends JFrame

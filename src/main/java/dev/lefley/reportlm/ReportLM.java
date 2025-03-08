@@ -39,7 +39,7 @@ public class ReportLM implements BurpExtension
 
         Ai ai = new TraceLoggingAi(montoyaApi.ai());
 
-        ConfigModel configModel = new ConfigModel();
+        ConfigModel configModel = new ConfigModel(montoyaApi.persistence().preferences());
         IssuesModel issuesModel = new IssuesModel();
         CustomRequirementsInput customInstructionsModel = new CustomRequirementsInput();
         GenerateReportModel generateReportModel = new GenerateReportModel();

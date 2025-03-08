@@ -72,7 +72,7 @@ public class ConfigPanel extends JPanel
 
         includeEvidenceSelection = new JCheckBox();
         includeEvidenceSelection.setSelected(true);
-        includeEvidenceSelection.addItemListener(e -> setIncludeEvidenceSelection(((boolean) e.getItem())));
+        includeEvidenceSelection.addItemListener(e -> setIncludeEvidenceSelection(includeEvidenceSelection.isSelected()));
         add(includeEvidenceSelection, buildDefaultConstraints(1, 4));
 
         constraints = buildDefaultConstraints(0, 5);
