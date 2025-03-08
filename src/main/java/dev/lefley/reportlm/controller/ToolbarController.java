@@ -1,5 +1,6 @@
 package dev.lefley.reportlm.controller;
 
+import dev.lefley.reportlm.model.GenerateReportModel.GenerationStatus;
 import dev.lefley.reportlm.view.ToolbarView;
 
 public class ToolbarController
@@ -16,8 +17,8 @@ public class ToolbarController
         toolbarView.setIssuesSelected(issuesSelected);
     }
 
-    public void setGenerationEnabled(boolean canGenerateReport)
+    public void setGenerationStatus(GenerationStatus generationStatus)
     {
-        toolbarView.setGenerationEnabled(canGenerateReport);
+        toolbarView.setGenerationStatus(generationStatus);
     }
 }

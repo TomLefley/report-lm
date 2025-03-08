@@ -4,8 +4,21 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static dev.lefley.reportlm.model.GenerateReportModel.GenerationStatus.AI_DISABLED;
+import static dev.lefley.reportlm.model.GenerateReportModel.GenerationStatus.GENERATION_RUNNING;
+import static dev.lefley.reportlm.model.GenerateReportModel.GenerationStatus.ISSUES_NOT_POPULATED;
+import static dev.lefley.reportlm.model.GenerateReportModel.GenerationStatus.READY;
+
 public class GenerateReportModel
 {
+    public enum GenerationStatus
+    {
+        AI_DISABLED,
+        ISSUES_NOT_POPULATED,
+        GENERATION_RUNNING,
+        READY
+    }
+
     private final Lock readLock;
     private final Lock writeLock;
 
@@ -24,12 +37,27 @@ public class GenerateReportModel
         this.generationRunning = false;
     }
 
-    public boolean canGenerateReport()
+    public GenerationStatus getGenerationStatus()
     {
         readLock.lock();
         try
         {
-            return aiEnabled && issuesPopulated && !generationRunning;
+            if (generationRunning)
+            {
+                return GENERATION_RUNNING;
+            }
+
+            if (!aiEnabled)
+            {
+                return AI_DISABLED;
+            }
+
+            if (!issuesPopulated)
+            {
+                return ISSUES_NOT_POPULATED;
+            }
+
+            return READY;
         }
         finally
         {

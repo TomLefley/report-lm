@@ -5,6 +5,7 @@ import dev.lefley.reportlm.model.ConfigModel;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.ConfigChangedEvent;
 import dev.lefley.reportlm.util.Logger;
+import dev.lefley.reportlm.view.components.burp.BurpIcon;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -14,6 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.CLOSE;
@@ -27,9 +30,25 @@ public class OpenConfigButton extends JButton
 
     public OpenConfigButton(ConfigModel configModel)
     {
-        super(icon(SETTINGS).fontSized().build());
+        BurpIcon staticIcon = icon(SETTINGS).fontSized().build();
+        setIcon(staticIcon);
 
         setToolTipText("Open settings");
+
+        addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseEntered(MouseEvent e)
+            {
+                setIcon(new RotatingIcon(staticIcon, 60, 0.75f, true));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e)
+            {
+                setIcon(staticIcon);
+            }
+        });
 
         addActionListener(e -> openSettings(configModel.getConfig()));
     }

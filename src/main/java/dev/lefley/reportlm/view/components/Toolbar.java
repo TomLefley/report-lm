@@ -1,6 +1,7 @@
 package dev.lefley.reportlm.view.components;
 
 import dev.lefley.reportlm.model.ConfigModel;
+import dev.lefley.reportlm.model.GenerateReportModel.GenerationStatus;
 import dev.lefley.reportlm.view.ToolbarView;
 
 import javax.swing.Box;
@@ -40,8 +41,8 @@ public class Toolbar extends JPanel implements ToolbarView
     }
 
     @Override
-    public void setGenerationEnabled(boolean canGenerateReport)
+    public void setGenerationStatus(GenerationStatus generationStatus)
     {
-        SwingUtilities.invokeLater(() -> generateButton.setEnabled(canGenerateReport));
+        SwingUtilities.invokeLater(() -> generateButton.setGenerationStatus(generationStatus));
     }
 }

@@ -23,6 +23,7 @@ public enum BurpIconFile
     REPORT("notes.svg"),
     README("github.svg"),
     SETTINGS("settings.svg"),
+    SPINNER("spinner.svg"),
     AI("ai.svg"),
     ;
 

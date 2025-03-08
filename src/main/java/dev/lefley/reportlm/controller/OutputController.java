@@ -67,18 +67,18 @@ public class OutputController
     private void setAiEnabled(boolean aiEnabled)
     {
         generateReportModel.setAiEnabled(aiEnabled);
-        toolbarController.setGenerationEnabled(generateReportModel.canGenerateReport());
+        toolbarController.setGenerationStatus(generateReportModel.getGenerationStatus());
     }
 
     private void setGenerationRunning(boolean generationRunning)
     {
         generateReportModel.setGenerationRunning(generationRunning);
-        toolbarController.setGenerationEnabled(generateReportModel.canGenerateReport());
+        toolbarController.setGenerationStatus(generateReportModel.getGenerationStatus());
     }
 
     public void setIssuesPopulated(boolean issuesPopulated)
     {
         generateReportModel.setIssuesPopulated(issuesPopulated);
-        toolbarController.setGenerationEnabled(generateReportModel.canGenerateReport());
+        toolbarController.setGenerationStatus(generateReportModel.getGenerationStatus());
     }
 }
