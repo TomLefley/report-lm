@@ -30,9 +30,26 @@ public class Report
         }
     }
 
+    public String readIndex()
+    {
+        try
+        {
+            return Files.readString(getIndex());
+        }
+        catch (IOException e)
+        {
+            throw new UncheckedIOException("Could not read index file", e);
+        }
+    }
+
     public Path getDirectory()
     {
         return directory;
+    }
+
+    public Path getIndex()
+    {
+        return directory.resolve("index.html");
     }
 
     public void saveIndex(String index)

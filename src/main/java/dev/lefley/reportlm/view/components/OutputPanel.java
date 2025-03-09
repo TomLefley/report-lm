@@ -6,7 +6,6 @@ import dev.lefley.reportlm.view.OutputView;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import java.awt.BorderLayout;
@@ -17,9 +16,11 @@ import static javax.swing.BoxLayout.Y_AXIS;
 
 public class OutputPanel extends JPanel implements OutputView
 {
-    private final ReportPane reportPane;
+    private final ReportPanel reportPanel;
     private final CopyToClipboardButton copyToClipboardButton;
     private final ToggleReadMeButton toggleReadMeButton;
+
+    private Report report;
 
     public OutputPanel()
     {
@@ -28,20 +29,20 @@ public class OutputPanel extends JPanel implements OutputView
         setLayout(new BoxLayout(this, Y_AXIS));
         setBorder(new EmptyBorder(20, 20, 20, 20));
 
-        reportPane = new ReportPane();
+        reportPanel = new ReportPanel();
 
         JPanel toolbar = new JPanel();
         toolbar.setLayout(new BoxLayout(toolbar, X_AXIS));
 
         toolbar.add(Box.createHorizontalGlue());
 
-        copyToClipboardButton = new CopyToClipboardButton(reportPane::getText);
+        copyToClipboardButton = new CopyToClipboardButton(() -> report.readIndex());
         copyToClipboardButton.setVisible(false);
         toolbar.add(copyToClipboardButton);
 
         toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
 
-        toggleReadMeButton = new ToggleReadMeButton(this::showReadMe, this::hideReadMe);
+        toggleReadMeButton = new ToggleReadMeButton(this::showReadMe, this::showReport);
         toggleReadMeButton.setVisible(false);
         toolbar.add(toggleReadMeButton);
 
@@ -49,16 +50,16 @@ public class OutputPanel extends JPanel implements OutputView
 
         add(Box.createVerticalStrut(10));
 
-        JScrollPane scrollPane = new JScrollPane(reportPane);
-        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        add(scrollPane);
+        add(reportPanel);
     }
 
     @Override
     public void setReport(Report report)
     {
         SwingUtilities.invokeLater(() -> {
-            reportPane.setReport(report);
+            this.report = report;
+
+            reportPanel.showReport(report);
 
             toggleReadMeButton.setVisible(true);
             toggleReadMeButton.toggle(true);
@@ -70,12 +71,12 @@ public class OutputPanel extends JPanel implements OutputView
     private void showReadMe()
     {
         copyToClipboardButton.setVisible(false);
-        reportPane.showReadMe();
+        reportPanel.showReadMe();
     }
 
-    private void hideReadMe()
+    private void showReport()
     {
         copyToClipboardButton.setVisible(true);
-        reportPane.hideReadMe();
+        reportPanel.showReport();
     }
 }
