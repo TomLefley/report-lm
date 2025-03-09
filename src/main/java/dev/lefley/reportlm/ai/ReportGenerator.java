@@ -59,7 +59,7 @@ public class ReportGenerator
         return switch (config.reportGenerationMode())
         {
             case COMBINED -> new CombinedReportGenerationStrategy(ai, config.includeEvidence());
-            case INDIVIDUAL -> new CombinedReportGenerationStrategy(ai, config.includeEvidence());
+            case INDIVIDUAL -> new IndividualReportGenerationStrategy(ai, config.includeEvidence());
             case BURP -> new CombinedReportGenerationStrategy(ai, config.includeEvidence());
         };
     }

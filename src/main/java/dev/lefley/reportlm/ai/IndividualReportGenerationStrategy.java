@@ -10,17 +10,18 @@ import dev.lefley.reportlm.util.Threads;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.concurrent.CompletableFuture;
 
 import static burp.api.montoya.ai.chat.Message.systemMessage;
 import static burp.api.montoya.ai.chat.Message.userMessage;
 
-public class CombinedReportGenerationStrategy implements ReportGenerationStrategy
+public class IndividualReportGenerationStrategy implements ReportGenerationStrategy
 {
     private static final String SYSTEM_MESSAGE =
             """
             You are a DAST vulnerability report writer.
-            You will be given a series of web application vulnerabilities found by Burp Suite's DAST scanner.
+            You will be given a web application vulnerability found by Burp Suite's DAST scanner.
             You will also be given a set of custom requirements from the client.
             
             Your task is to generate a vulnerability report in simple markdown.
@@ -29,7 +30,7 @@ public class CombinedReportGenerationStrategy implements ReportGenerationStrateg
             
                    - Be structured in a clear and readable format
                    - Be detailed and comprehensive
-                   - Retain the original wording of the issues where possible
+                   - Retain the original wording of the issue where possible
                    - Include all the information requested by the client
                    - Include any additional information you think is relevant
             
@@ -43,7 +44,7 @@ public class CombinedReportGenerationStrategy implements ReportGenerationStrateg
     private final Ai ai;
     private final boolean includeEvidence;
 
-    public CombinedReportGenerationStrategy(Ai ai, boolean includeEvidence)
+    public IndividualReportGenerationStrategy(Ai ai, boolean includeEvidence)
     {
         this.ai = ai;
         this.includeEvidence = includeEvidence;
@@ -84,15 +85,28 @@ public class CombinedReportGenerationStrategy implements ReportGenerationStrateg
     {
         Logger.logToOutput("Generating report from %d issues ...".formatted(issues.size()));
 
-        List<Message> messages = createMessages(customRequirements, issues);
+        StringJoiner report = new StringJoiner("\n");
 
-        String markdownReport = ai.prompt().execute(messages.toArray(Message[]::new)).content();
+        for (int i = 0; i < issues.size(); i++)
+        {
+            Logger.logToOutput("Generating report for issue %d".formatted(i));
+
+            AuditIssue issue = issues.get(i);
+            List<Message> messages = createMessages(customRequirements, issue);
+
+            String markdownReport = ai.prompt().execute(messages.toArray(Message[]::new)).content();
+
+            report.add(markdownReport);
+
+            Logger.logToOutput("Report generated for issue %d".formatted(i));
+        }
 
         Logger.logToOutput("Report generated!");
-        return markdownReport;
+
+        return report.toString();
     }
 
-    private List<Message> createMessages(String customInstructions, List<AuditIssue> issues)
+    private List<Message> createMessages(String customInstructions, AuditIssue issue)
     {
         List<Message> messages = new ArrayList<>();
         messages.add(createSystemMessage(includeEvidence));
@@ -100,10 +114,9 @@ public class CombinedReportGenerationStrategy implements ReportGenerationStrateg
         {
             messages.add(createCustomRequirementsMessage(customInstructions));
         }
-        for (AuditIssue issue : issues)
-        {
-            messages.add(createIssueMessage(issue, includeEvidence));
-        }
+
+        messages.add(createIssueMessage(issue, includeEvidence));
+
         return messages;
     }
 
