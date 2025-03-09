@@ -1,6 +1,7 @@
 package dev.lefley.reportlm.ai;
 
 import burp.api.montoya.ai.Ai;
+import burp.api.montoya.scanner.Scanner;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
 import dev.lefley.reportlm.config.Config;
 import dev.lefley.reportlm.model.ConfigModel;
@@ -17,11 +18,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ReportGenerator
 {
     private final Ai ai;
+    private final Scanner scanner;
     private final ConfigModel configModel;
 
-    public ReportGenerator(Ai ai, ConfigModel configModel)
+    public ReportGenerator(Ai ai, Scanner scanner, ConfigModel configModel)
     {
         this.ai = ai;
+        this.scanner = scanner;
         this.configModel = configModel;
 
         AtomicBoolean aiEnabled = new AtomicBoolean(false);
@@ -60,7 +63,7 @@ public class ReportGenerator
         {
             case COMBINED -> new CombinedReportGenerationStrategy(ai, config.includeEvidence());
             case INDIVIDUAL -> new IndividualReportGenerationStrategy(ai, config.includeEvidence());
-            case BURP -> new CombinedReportGenerationStrategy(ai, config.includeEvidence());
+            case BURP -> new BurpReportGenerationStrategy(ai, scanner);
         };
     }
 }

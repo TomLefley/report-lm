@@ -13,7 +13,7 @@ public class Report
 {
     private final Path directory;
 
-    private Report(Path directory)
+    public Report(Path directory)
     {
         this.directory = directory;
     }
