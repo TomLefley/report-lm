@@ -14,6 +14,7 @@ public class ConfigController
     {
         this.configModel = configModel;
 
+        updateConfig(configModel.getConfig());
         Events.subscribe(ConfigChangedEvent.class, event -> updateConfig(event.config()));
     }
 
