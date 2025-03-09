@@ -3,73 +3,42 @@ package dev.lefley.reportlm.view.components;
 import dev.lefley.reportlm.util.Clipboard;
 import dev.lefley.reportlm.view.components.burp.BurpIcon;
 
-import javax.swing.JLabel;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.function.Supplier;
 
 import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.COPY;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.TICK;
 
-public class CopyToClipboardButton extends JLabel
+public class CopyToClipboardButton extends SimpleIconButton
 {
+    private static final BurpIcon COPY_ICON = icon(COPY).fontSized().build();
+    private static final BurpIcon TICK_ICON = icon(TICK).fontSized().build();
+
     private final Supplier<String> textSupplier;
 
-    private final BurpIcon copyIcon;
-    private final BurpIcon tickIcon;
     private final Timer onCopy;
 
     public CopyToClipboardButton(Supplier<String> textSupplier)
     {
+        super(COPY_ICON);
+
         this.textSupplier = textSupplier;
 
-        setFocusable(false);
         setHorizontalTextPosition(SwingConstants.LEADING);
 
-        copyIcon = icon(COPY).fontSized().build();
-        tickIcon = icon(TICK).fontSized().build();
         onCopy = new Timer(1000, e -> setReadyToCopy());
 
         setReadyToCopy();
 
-        MouseAdapter mouseAdapter = new MouseAdapter()
-        {
-            @Override
-            public void mousePressed(MouseEvent e)
-            {
-                copyToClipboard();
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e)
-            {
-                copyIcon.setHover();
-                tickIcon.setHover();
-
-                repaint();
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e)
-            {
-                copyIcon.setNormal();
-                tickIcon.setNormal();
-
-                repaint();
-            }
-        };
-
-        addMouseListener(mouseAdapter);
-        addMouseMotionListener(mouseAdapter);
+        addClickListener(this::copyToClipboard);
     }
 
     private void setReadyToCopy()
     {
         setEnabled(true);
-        setIcon(copyIcon);
+        setIcon(COPY_ICON);
         setToolTipText("Copy to clipboard");
         setText("");
     }
@@ -77,7 +46,7 @@ public class CopyToClipboardButton extends JLabel
     private void copyToClipboard()
     {
         setEnabled(false);
-        setIcon(tickIcon);
+        setIcon(TICK_ICON);
         setToolTipText("Copied!");
         setText("Copied!");
 

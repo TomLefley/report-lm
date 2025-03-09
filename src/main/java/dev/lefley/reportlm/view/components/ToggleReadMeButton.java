@@ -2,65 +2,28 @@ package dev.lefley.reportlm.view.components;
 
 import dev.lefley.reportlm.view.components.burp.BurpIcon;
 
-import javax.swing.JLabel;
-import javax.swing.SwingConstants;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-
 import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.README;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.REPORT;
 
-public class ToggleReadMeButton extends JLabel
+public class ToggleReadMeButton extends SimpleIconButton
 {
+    private static final BurpIcon READ_ME_ICON = icon(README).fontSized().build();
+    private static final BurpIcon REPORT_ICON = icon(REPORT).fontSized().build();
+
     private final Runnable showReadMe;
     private final Runnable showReport;
-
-    private final BurpIcon readMeIcon;
-    private final BurpIcon reportIcon;
 
     private boolean isReadMeShowing;
 
     public ToggleReadMeButton(Runnable showReadMe, Runnable showReport)
     {
+        super(READ_ME_ICON);
+
         this.showReadMe = showReadMe;
         this.showReport = showReport;
 
-        setFocusable(false);
-        setHorizontalTextPosition(SwingConstants.LEADING);
-
-        readMeIcon = icon(README).fontSized().build();
-        reportIcon = icon(REPORT).fontSized().build();
-
-        MouseAdapter mouseAdapter = new MouseAdapter()
-        {
-            @Override
-            public void mousePressed(MouseEvent e)
-            {
-                toggle(ToggleReadMeButton.this.isReadMeShowing);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e)
-            {
-                readMeIcon.setHover();
-                reportIcon.setHover();
-
-                repaint();
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e)
-            {
-                readMeIcon.setNormal();
-                reportIcon.setNormal();
-
-                repaint();
-            }
-        };
-
-        addMouseListener(mouseAdapter);
-        addMouseMotionListener(mouseAdapter);
+        addClickListener(() -> toggle(isReadMeShowing));
 
         toggle(false);
     }
@@ -69,14 +32,14 @@ public class ToggleReadMeButton extends JLabel
     {
         if (transitionToReport)
         {
-            setIcon(readMeIcon);
+            setIcon(READ_ME_ICON);
             setToolTipText("Show README");
 
             showReport.run();
         }
         else
         {
-            setIcon(reportIcon);
+            setIcon(REPORT_ICON);
             setToolTipText("Show report");
 
             showReadMe.run();

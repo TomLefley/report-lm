@@ -25,6 +25,7 @@ public enum BurpIconFile
     SETTINGS("settings.svg"),
     SPINNER("spinner.svg"),
     AI("ai.svg"),
+    SAVE("download.svg"),
     ;
 
     private static final String SVG_DIRECTORY_FILEPATH = "resources/Media/svg/%s";

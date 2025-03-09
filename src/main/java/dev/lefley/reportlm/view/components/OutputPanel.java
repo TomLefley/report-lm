@@ -18,6 +18,7 @@ public class OutputPanel extends JPanel implements OutputView
 {
     private final ReportPanel reportPanel;
     private final CopyToClipboardButton copyToClipboardButton;
+    private final SaveButton saveButton;
     private final ToggleReadMeButton toggleReadMeButton;
 
     private Report report;
@@ -39,6 +40,12 @@ public class OutputPanel extends JPanel implements OutputView
         copyToClipboardButton = new CopyToClipboardButton(() -> report.readIndex());
         copyToClipboardButton.setVisible(false);
         toolbar.add(copyToClipboardButton);
+
+        toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
+
+        saveButton = new SaveButton(() -> report.getDirectory());
+        saveButton.setVisible(false);
+        toolbar.add(saveButton);
 
         toolbar.add(Box.createRigidArea(new Dimension(10, 0)));
 
@@ -65,18 +72,21 @@ public class OutputPanel extends JPanel implements OutputView
             toggleReadMeButton.toggle(true);
 
             copyToClipboardButton.setVisible(true);
+            saveButton.setVisible(true);
         });
     }
 
     private void showReadMe()
     {
         copyToClipboardButton.setVisible(false);
+        saveButton.setVisible(false);
         reportPanel.showReadMe();
     }
 
     private void showReport()
     {
         copyToClipboardButton.setVisible(true);
+        saveButton.setVisible(true);
         reportPanel.showReport();
     }
 }
