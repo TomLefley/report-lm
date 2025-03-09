@@ -170,13 +170,12 @@ public class ConfigPanel extends JPanel
             includeEvidenceLabel.setEnabled(false);
 
             includeEvidenceSelection.setEnabled(false);
-            includeEvidenceSelection.setSelected(true);
+            includeEvidenceSelection.setSelected(false);
 
             includeEvidenceDescription.setEnabled(false);
             includeEvidenceDescription.setText(
                     """
-                    Inline evidence is always included when generating a Burp report.
-                    Note: as it is not necessary to rewrite evidence it is not passed to Burp AI."""
+                    Reports generated in Burp mode currently do not support evidence.""" // This is a limitation of the Montoya API, don't @ me
             );
         }
         else
