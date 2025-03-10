@@ -23,7 +23,9 @@ public enum ReportGenerationMode
             "Burp",
             """
             Issue detail, background, and remediation will be extracted and sent to Burp AI individually for each issue. The results will be combined into a single report using Burp Suite's in-built report generation.
-            This will result in the most comprehensive report, but is the slowest method and uses the most credits."""
+            This will result in the most comprehensive report, but is the slowest method and uses the most credits.
+            
+            Note: The in-built report viewer does not currently support all HTML features used by Burp Suite reports, resulting in some display issues. For best results, save the report and view it in a browser."""
     );
 
     private final int id;
