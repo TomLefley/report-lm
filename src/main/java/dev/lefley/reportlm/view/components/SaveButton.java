@@ -26,6 +26,8 @@ public class SaveButton extends SimpleIconButton
         super(SAVE_ICON);
         this.directorySupplier = directorySupplier;
 
+        setToolTipText("Save report");
+
         addClickListener(this::openFileChooser);
     }
 
