@@ -44,7 +44,7 @@ public class ReportLM implements BurpExtension
         CustomRequirementsInput customInstructionsModel = new CustomRequirementsInput();
         GenerateReportModel generateReportModel = new GenerateReportModel();
 
-        ReportGenerator reportGenerator = new ReportGenerator(ai, montoyaApi.scanner(), configModel);
+        ReportGenerator reportGenerator = new ReportGenerator(ai);
 
         Toolbar toolbar = new Toolbar(configModel);
         InputPanel inputPanel = new InputPanel(toolbar, customInstructionsModel, issuesModel);

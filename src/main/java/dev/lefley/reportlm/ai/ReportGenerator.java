@@ -1,13 +1,11 @@
 package dev.lefley.reportlm.ai;
 
 import burp.api.montoya.ai.Ai;
-import burp.api.montoya.scanner.Scanner;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
-import dev.lefley.reportlm.config.Config;
-import dev.lefley.reportlm.model.ConfigModel;
 import dev.lefley.reportlm.model.Report;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.AiToggledEvent;
+import dev.lefley.reportlm.util.Markdown;
 import dev.lefley.reportlm.util.Threads;
 
 import java.util.List;
@@ -17,15 +15,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ReportGenerator
 {
-    private final Ai ai;
-    private final Scanner scanner;
-    private final ConfigModel configModel;
+    private static final String SYSTEM_MESSAGE =
+            """
+            You are a DAST vulnerability report writer.
+            You will be given a series of web application vulnerabilities found by Burp Suite's DAST scanner.
+            You will also be given a set of custom requirements from the client.
+            
+            Your task is to generate a vulnerability report in simple markdown.
+            
+            Unless otherwise specified, the report should:
+            
+                   - Be structured in a clear and readable format
+                   - Be detailed and comprehensive
+                   - Retain the original wording of the issues where possible
+                   - Include all the information requested by the client
+                   - Include any additional information you think is relevant
+            
+            Where issue evidence is available, each item can be referenced with a link to "file:./evidence/<issue_id>/request<n>" and "file:./evidence/<issue_id>/response<n>".
+            """;
 
-    public ReportGenerator(Ai ai, Scanner scanner, ConfigModel configModel)
+    private final Ai ai;
+
+    public ReportGenerator(Ai ai)
     {
         this.ai = ai;
-        this.scanner = scanner;
-        this.configModel = configModel;
 
         AtomicBoolean aiEnabled = new AtomicBoolean(false);
         Threads.scheduleAtFixedRate(
@@ -54,16 +67,25 @@ public class ReportGenerator
             return CompletableFuture.failedFuture(new IllegalStateException("No issues supplied!"));
         }
 
-        return getReportGenerationStrategy(configModel.getConfig()).generateReport(customInstructions, issues);
+        return CompletableFuture.supplyAsync(() -> buildReport(customInstructions, issues), Threads::execute);
     }
 
-    private ReportGenerationStrategy getReportGenerationStrategy(Config config)
+    private Report buildReport(String customInstructions, List<AuditIssue> issues)
     {
-        return switch (config.reportGenerationMode())
-        {
-            case COMBINED -> new CombinedReportGenerationStrategy(ai, config.includeEvidence());
-            case INDIVIDUAL -> new IndividualReportGenerationStrategy(ai, config.includeEvidence());
-            case BURP -> new BurpReportGenerationStrategy(ai, scanner);
-        };
+        Report report = Report.createReport();
+        report.saveEvidence(issues);
+
+        String markdownReport = executePrompt(customInstructions, issues);
+
+        String htmlReport = Markdown.renderMarkdownAsHtml(markdownReport);
+
+        report.saveIndex(htmlReport);
+
+        return report;
+    }
+
+    private String executePrompt(String customRequirements, List<AuditIssue> issues)
+    {
+        return "Report generation is not yet implemented.";
     }
 }
