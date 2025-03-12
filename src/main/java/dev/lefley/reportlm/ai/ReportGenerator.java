@@ -1,13 +1,17 @@
 package dev.lefley.reportlm.ai;
 
 import burp.api.montoya.ai.Ai;
+import burp.api.montoya.ai.chat.Message;
+import burp.api.montoya.ai.chat.PromptException;
 import burp.api.montoya.scanner.audit.issues.AuditIssue;
 import dev.lefley.reportlm.model.Report;
 import dev.lefley.reportlm.util.Events;
 import dev.lefley.reportlm.util.Events.AiToggledEvent;
+import dev.lefley.reportlm.util.Logger;
 import dev.lefley.reportlm.util.Markdown;
 import dev.lefley.reportlm.util.Threads;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -86,6 +90,50 @@ public class ReportGenerator
 
     private String executePrompt(String customRequirements, List<AuditIssue> issues)
     {
-        return "Report generation is not yet implemented.";
+        List<Message> messages = new ArrayList<>();
+
+        Message systemMessage = Message.systemMessage(SYSTEM_MESSAGE);
+        messages.add(systemMessage);
+
+        Message userMessage = Message.userMessage("Custom requirements: " + customRequirements);
+        messages.add(userMessage);
+
+        issues.forEach(issue -> {
+            Message issueMessage = Message.userMessage(issueMessage(issue));
+            messages.add(issueMessage);
+        });
+
+        try
+        {
+            return ai.prompt().execute(messages.toArray(Message[]::new)).content();
+        }
+        catch (PromptException e)
+        {
+            Logger.logToError("Could not execute prompt", e);
+            return "";
+        }
+    }
+
+    private static String issueMessage(AuditIssue issue)
+    {
+        return """
+               Issue type: %s
+               Issue severity: %s
+               Issue confidence: %s
+               URL: %s
+               Detail: %s
+               Background: %s
+               Remediation: %s
+               Evidence item: %d
+               """.formatted(
+                issue.name(),
+                issue.severity(),
+                issue.confidence(),
+                issue.baseUrl(),
+                issue.detail(),
+                issue.definition().background(),
+                issue.definition().remediation(),
+                issue.requestResponses().size()
+        );
     }
 }
