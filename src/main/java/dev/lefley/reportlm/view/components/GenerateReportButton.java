@@ -13,7 +13,7 @@ import static dev.lefley.reportlm.view.components.burp.BurpIcon.Builder.icon;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.AI;
 import static dev.lefley.reportlm.view.components.burp.BurpIconFile.SPINNER;
 
-public class GenerateReportButton extends PrimaryButton
+public class GenerateReportButton extends IconHoverButton
 {
     public GenerateReportButton()
     {
@@ -23,6 +23,7 @@ public class GenerateReportButton extends PrimaryButton
         );
 
         setGenerationStatus(AI_DISABLED);
+        style("ai");
 
         addActionListener(e -> Events.publish(new GenerateReportEvent()));
     }

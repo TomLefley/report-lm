@@ -65,8 +65,8 @@ public class BurpIcon extends FlatSVGIcon
         private final BurpIconFile iconFile;
 
         private float scale = 1.0f;
-        private BurpColor normalColour = BurpColor.ACTION_NORMAL;
-        private BurpColor hoverColour = BurpColor.ACTION_HOVER;
+        private BurpColor normalColour = BurpColor.ICON_DEFAULT;
+        private BurpColor hoverColour = BurpColor.ICON_HOVER;
 
         private Builder(BurpIconFile iconFile)
         {
@@ -80,7 +80,7 @@ public class BurpIcon extends FlatSVGIcon
 
         public Builder fontSized()
         {
-            this.scale = 0.6f;
+            this.scale = BurpFont.displayFont().getSize() / 20f;
             return this;
         }
 

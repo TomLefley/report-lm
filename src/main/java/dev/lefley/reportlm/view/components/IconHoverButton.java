@@ -7,11 +7,16 @@ import java.awt.Dimension;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import static com.formdev.flatlaf.FlatClientProperties.STYLE_CLASS;
+
 public class IconHoverButton extends JButton
 {
-    public IconHoverButton(String text, BurpIcon icon)
+    public IconHoverButton(String text, BurpIcon.Builder iconBuilder)
     {
         super(text);
+
+        BurpIcon icon = iconBuilder.fontSized().build();
+        icon.setHover();
 
         addMouseListener(new MouseAdapter()
         {
@@ -37,5 +42,10 @@ public class IconHoverButton extends JButton
                 }
             }
         });
+    }
+
+    public void style(String styleKey)
+    {
+        putClientProperty(STYLE_CLASS, styleKey);
     }
 }

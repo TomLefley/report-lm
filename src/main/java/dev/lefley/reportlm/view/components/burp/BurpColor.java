@@ -2,26 +2,31 @@ package dev.lefley.reportlm.view.components.burp;
 
 import javax.swing.UIManager;
 import java.awt.Color;
-import java.util.Objects;
 
 public enum BurpColor
 {
-    PRIMARY_BUTTON_FOREGROUND("Burp.primaryButtonForeground"),
-    PRIMARY_BUTTON_BACKGROUND("Burp.primaryButtonBackground"),
-
-    ACTION_NORMAL("Burp.actionNormal"),
-    ACTION_HOVER("Burp.actionHover"),
+    ICON_DEFAULT("Colors.ui.icon.default", "Burp.actionNormal"),
+    ICON_HOVER("Colors.ui.icon.hover", "Burp.actionHover"),
     ;
 
-    private final String colorKey;
+    private final String[] colorKeys;
 
-    BurpColor(String colorKey)
+    BurpColor(String... colorKeys)
     {
-        this.colorKey = colorKey;
+        this.colorKeys = colorKeys;
     }
 
     public Color getColor()
     {
-        return Objects.requireNonNullElse(UIManager.getColor(colorKey), Color.RED);
+        for (String colorKey : colorKeys)
+        {
+            Color color = UIManager.getColor(colorKey);
+            if (color != null)
+            {
+                return color;
+            }
+        }
+
+        return Color.RED;
     }
 }

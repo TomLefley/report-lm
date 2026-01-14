@@ -93,8 +93,8 @@ public class OpenConfigButton extends JButton
 
             actions.add(Box.createHorizontalGlue());
 
-            JButton cancelButton = new IconHoverButton("Cancel", icon(CLOSE).fontSized().build());
-            JButton saveButton = new PrimaryButton("Save", icon(TICK));
+            JButton cancelButton = new IconHoverButton("Cancel", icon(CLOSE));
+            JButton saveButton = new IconHoverButton("Save", icon(TICK));
 
             saveButton.addActionListener(e -> saveConfig(configPanel.getConfig()));
             cancelButton.addActionListener(e -> dispose());
